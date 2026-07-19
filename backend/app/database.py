@@ -7,7 +7,7 @@ load_dotenv()
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql://medicore:engclin_pass@localhost:5432/medicore",
+    "postgresql://medicore:medicore123@localhost:5432/medicore",
 )
 engine = create_engine(DATABASE_URL, connect_args={"client_encoding": "utf8"})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
