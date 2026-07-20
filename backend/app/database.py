@@ -7,10 +7,13 @@ load_dotenv()
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql://medicore:medicore123@localhost:5432/medicore",
+    "postgresql://engclin_user:engclin_pass@localhost:5432/engclin_db",
 )
-engine = create_engine(DATABASE_URL, connect_args={"client_encoding": "utf8"})
+engine = create_engine(DATABASE_URL)
+
+# Cada requisição à API vai abre uma "sessão" (conversa) com o banco
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
 Base = declarative_base()
 
 

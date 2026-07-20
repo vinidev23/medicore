@@ -8,9 +8,9 @@ from app.database import Base
 
 
 class TipoOSEnum(str, enum.Enum):
-    CORRETIVA = "corretiva"
-    PREVENTIVA = "preventiva"
-    CALIBRACAO = "calibracao"
+    CORRETIVA = "corretiva"        # equipamento quebrou, precisa de reparo
+    PREVENTIVA = "preventiva"      # manutenção programada
+    CALIBRACAO = "calibracao"      # ajuste/aferição de precisão
 
 
 class StatusOSEnum(str, enum.Enum):
@@ -24,6 +24,8 @@ class OrdemServico(Base):
     __tablename__ = "ordens_servico"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+
+    # Chave estrangeira: liga essa OS a um equipamento específico.
     equipamento_id: Mapped[int] = mapped_column(
         ForeignKey("equipamentos.id"), nullable=False
     )
@@ -37,6 +39,8 @@ class OrdemServico(Base):
     )
 
     descricao_problema: Mapped[str] = mapped_column(Text, nullable=True)
+
+    # Datas-chave para calcular os indicadores:
     data_abertura: Mapped[datetime] = mapped_column(
         DateTime, nullable=False, default=datetime.utcnow
     )

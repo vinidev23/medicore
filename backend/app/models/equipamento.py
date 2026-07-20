@@ -8,10 +8,10 @@ from app.database import Base
 
 
 class CriticidadeEnum(str, enum.Enum):
-    SUPORTE_VIDA = "suporte_vida"
-    ALTA = "alta"
-    MEDIA = "media"
-    BAIXA = "baixa"
+    SUPORTE_VIDA = "suporte_vida"      # ex: ventilador, monitor de UTI
+    ALTA = "alta"                       # ex: bomba de infusão
+    MEDIA = "media"                     # ex: equipamento de diagnóstico
+    BAIXA = "baixa"                     # ex: equipamento administrativo
 
 
 class Equipamento(Base):
@@ -31,6 +31,8 @@ class Equipamento(Base):
 
     data_aquisicao: Mapped[date] = mapped_column(Date, nullable=True)
     valor_aquisicao: Mapped[float] = mapped_column(Numeric(12, 2), nullable=True)
+
+    # Relação: um equipamento tem várias ordens de serviço.
     ordens_servico: Mapped[list["OrdemServico"]] = relationship(
         "OrdemServico", back_populates="equipamento", cascade="all, delete-orphan"
     )
