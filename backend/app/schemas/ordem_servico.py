@@ -15,6 +15,11 @@ class OrdemServicoBase(BaseModel):
 
 
 class OrdemServicoCreate(OrdemServicoBase):
+    """
+    Ao abrir uma OS, não pedimos data_abertura: o servidor define
+    automaticamente como "agora", garantindo que ninguém possa
+    forjar uma data de abertura diferente da real.
+    """
     pass
 
 

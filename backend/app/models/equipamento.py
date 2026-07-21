@@ -1,7 +1,3 @@
-"""
-Modelo da tabela de Equipamentos.
-Cada linha aqui representa um equipamento físico do parque tecnológico do hospital.
-"""
 import enum
 from datetime import date
 
@@ -12,10 +8,6 @@ from app.database import Base
 
 
 class CriticidadeEnum(str, enum.Enum):
-    """
-    Classificação clínica do equipamento.
-    Isso vai alimentar o índice de risco que conversamos no dashboard.
-    """
     SUPORTE_VIDA = "suporte_vida"      # ex: ventilador, monitor de UTI
     ALTA = "alta"                       # ex: bomba de infusão
     MEDIA = "media"                     # ex: equipamento de diagnóstico

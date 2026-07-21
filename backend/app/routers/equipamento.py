@@ -58,7 +58,6 @@ def atualizar_equipamento(
     if not equipamento:
         raise HTTPException(status_code=404, detail="Equipamento não encontrado")
 
-    # Só atualiza os campos que o cliente realmente enviou
     dados_para_atualizar = dados.model_dump(exclude_unset=True)
     for campo, valor in dados_para_atualizar.items():
         setattr(equipamento, campo, valor)

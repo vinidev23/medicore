@@ -3,7 +3,7 @@ import axios from "axios";
 import PulseLine from "./PulseLine";
 
 export default function LoginPage({ onLoginSucesso }) {
-  const [modo, setModo] = useState("login"); // "login" ou "registrar"
+  const [modo, setModo] = useState("login");
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -16,7 +16,7 @@ export default function LoginPage({ onLoginSucesso }) {
     setCarregando(true);
 
     try {
-      // O endpoint /auth/login espera dados de FORMULÁRIO (não JSON), por isso usei URLSearchParams em vez de um objeto comum.
+      // O endpoint /auth/login espera dados de FORMULÁRIO (não JSON), por isso usamos URLSearchParams em vez de um objeto comum.
       const corpo = new URLSearchParams();
       corpo.append("username", email);
       corpo.append("password", senha);
@@ -46,7 +46,6 @@ export default function LoginPage({ onLoginSucesso }) {
         email,
         senha,
       });
-      // Após registrar com sucesso, já faz o login automaticamente
       await entrar(evento);
     } catch (e) {
       setErro(e.response?.data?.detail ?? "Erro ao criar conta.");

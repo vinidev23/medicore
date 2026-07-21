@@ -32,10 +32,6 @@ def registrar_usuario(dados: UsuarioCreate, db: Session = Depends(get_db)):
 def login(
     form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
 ):
-    """
-    Recebe usuário/senha em formato de formulário (padrão OAuth2).
-    No campo 'username' do formulário, o frontend deve enviar o e-mail.
-    """
     usuario = auth_service.autenticar_usuario(db, form_data.username, form_data.password)
     if not usuario:
         raise HTTPException(status_code=401, detail="E-mail ou senha incorretos")
@@ -46,5 +42,4 @@ def login(
 
 @router.get("/eu", response_model=UsuarioRead)
 def obter_meus_dados(usuario_atual: Usuario = Depends(auth_service.obter_usuario_atual)):
-    """Endpoint útil para o frontend confirmar se o token ainda é válido."""
     return usuario_atual

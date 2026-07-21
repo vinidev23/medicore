@@ -1,19 +1,3 @@
-"""
-1. Olha o custo real de manutenção do equipamento nos últimos N meses
-   (por padrão 12), somando o campo 'custo' das ordens de serviço.
-
-2. Calcula o custo médio mensal de manutenção nesse período, e
-   projeta esse custo para os próximos 12 meses — ou seja,
-   "se nada mudar, quanto vai custar MANTER esse equipamento por mais 1 ano".
-
-3. Calcula o custo ANUALIZADO de substituir o equipamento agora:
-   valor de um equipamento novo equivalente, dividido pela vida útil
-   estimada em anos. Isso representa "quanto custaria, por ano, ter
-   um equipamento novo ao longo da vida útil dele".
-
-4. Compara os dois: se o custo de manter for maior que o custo
-   anualizado de substituir, a substituição tende a compensar.
-"""
 from datetime import datetime, timedelta
 from typing import Optional
 

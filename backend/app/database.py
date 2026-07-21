@@ -10,7 +10,6 @@ DATABASE_URL = os.getenv(
     "postgresql://engclin_user:engclin_pass@localhost:5432/engclin_db",
 )
 
-# O "engine" é o que sabe como se conectar fisicamente ao PostgreSQL.
 engine = create_engine(DATABASE_URL)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

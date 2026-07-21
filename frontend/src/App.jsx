@@ -33,6 +33,30 @@ export default function App() {
     setUsuario(null);
   }
 
+  const [baixandoRelatorio, setBaixandoRelatorio] = useState(false);
+
+  async function baixarRelatorioPDF() {
+    setBaixandoRelatorio(true);
+    try {
+      const resposta = await api.get("/relatorios/parque-tecnologico", {
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(new Blob([resposta.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "relatorio-parque-tecnologico.pdf");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (erro) {
+      console.error("Erro ao baixar relatório", erro);
+      alert("Não foi possível gerar o relatório.");
+    } finally {
+      setBaixandoRelatorio(false);
+    }
+  }
+
   const carregarDados = useCallback(async () => {
     try {
       const [respEquipamentos, respOrdens] = await Promise.all([
@@ -152,10 +176,37 @@ export default function App() {
           <>
             {abaAtiva === "painel" && (
               <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-                <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-                  <StatCard label="Equipamentos" value={equipamentos.length} tone="neutral" />
-                  <StatCard label="OS Corretivas" value={totalCorretivas} tone="amber" />
-                  <StatCard label="OS Em aberto" value={totalAbertas} tone="red" />
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    gap: 12,
+                  }}
+                >
+                  <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                    <StatCard label="Equipamentos" value={equipamentos.length} tone="neutral" />
+                    <StatCard label="OS Corretivas" value={totalCorretivas} tone="amber" />
+                    <StatCard label="OS Em aberto" value={totalAbertas} tone="red" />
+                  </div>
+                  <button
+                    onClick={baixarRelatorioPDF}
+                    disabled={baixandoRelatorio}
+                    style={{
+                      border: "1px solid var(--teal)",
+                      background: "transparent",
+                      color: "var(--teal)",
+                      borderRadius: "var(--radius)",
+                      padding: "8px 14px",
+                      fontSize: 13,
+                      fontWeight: 600,
+                      opacity: baixandoRelatorio ? 0.6 : 1,
+                      alignSelf: "flex-start",
+                    }}
+                  >
+                    {baixandoRelatorio ? "Gerando PDF..." : "⬇ Baixar relatório PDF"}
+                  </button>
                 </div>
                 <ChartsPanel equipamentos={equipamentos} ordens={ordens} />
                 <div>

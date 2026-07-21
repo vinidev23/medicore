@@ -17,7 +17,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "480"
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# Isso diz ao FastAPI onde fica o endpoint de login, para gerar automaticamente o botão "Authorize" na documentação /docs
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
