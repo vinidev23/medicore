@@ -7,6 +7,7 @@ import EquipmentForm from "./components/EquipmentForm";
 import OrdemServicoPanel from "./components/OrdemServicoPanel";
 import ChartsPanel from "./components/ChartsPanel";
 import SimuladorPanel from "./components/SimuladorPanel";
+import LoginPage from "./components/LoginPage";
 
 const ABAS = [
   { id: "painel", label: "Painel" },
@@ -16,11 +17,21 @@ const ABAS = [
 ];
 
 export default function App() {
+  const [usuario, setUsuario] = useState(() => {
+    const salvo = localStorage.getItem("medicore_usuario");
+    return salvo ? JSON.parse(salvo) : null;
+  });
   const [abaAtiva, setAbaAtiva] = useState("painel");
   const [equipamentos, setEquipamentos] = useState([]);
   const [ordens, setOrdens] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erroConexao, setErroConexao] = useState(false);
+
+  function fazerLogout() {
+    localStorage.removeItem("medicore_token");
+    localStorage.removeItem("medicore_usuario");
+    setUsuario(null);
+  }
 
   const carregarDados = useCallback(async () => {
     try {
@@ -40,13 +51,19 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    carregarDados();
-  }, [carregarDados]);
+    if (usuario) {
+      carregarDados();
+    }
+  }, [carregarDados, usuario]);
 
   const totalCorretivas = ordens.filter((os) => os.tipo === "corretiva").length;
   const totalAbertas = ordens.filter(
     (os) => os.status === "aberta" || os.status === "em_andamento"
   ).length;
+
+  if (!usuario) {
+    return <LoginPage onLoginSucesso={setUsuario} />;
+  }
 
   return (
     <div style={{ minHeight: "100%", padding: "0 0 60px" }}>
@@ -57,11 +74,29 @@ export default function App() {
           padding: "20px 32px 0",
         }}
       >
-        <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
-          <h1 style={{ fontSize: 20, letterSpacing: "-0.01em" }}>MediCore</h1>
-          <span style={{ fontSize: 13, color: "var(--ink-muted)" }}>
-            Engenharia Clínica · Gestão de Parque Tecnológico
-          </span>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 12, justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
+            <h1 style={{ fontSize: 20, letterSpacing: "-0.01em" }}>MediCore</h1>
+            <span style={{ fontSize: 13, color: "var(--ink-muted)" }}>
+              Engenharia Clínica · Gestão de Parque Tecnológico
+            </span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ fontSize: 13, color: "var(--ink-muted)" }}>{usuario.nome}</span>
+            <button
+              onClick={fazerLogout}
+              style={{
+                border: "1px solid var(--line)",
+                background: "transparent",
+                color: "var(--ink-muted)",
+                borderRadius: "var(--radius)",
+                padding: "6px 12px",
+                fontSize: 13,
+              }}
+            >
+              Sair
+            </button>
+          </div>
         </div>
 
         <PulseLine
