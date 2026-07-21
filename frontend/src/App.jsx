@@ -5,11 +5,14 @@ import StatCard from "./components/StatCard";
 import EquipmentTable from "./components/EquipmentTable";
 import EquipmentForm from "./components/EquipmentForm";
 import OrdemServicoPanel from "./components/OrdemServicoPanel";
+import ChartsPanel from "./components/ChartsPanel";
+import SimuladorPanel from "./components/SimuladorPanel";
 
 const ABAS = [
   { id: "painel", label: "Painel" },
   { id: "equipamentos", label: "Equipamentos" },
   { id: "ordens", label: "Ordens de Serviço" },
+  { id: "simulador", label: "Simulador" },
 ];
 
 export default function App() {
@@ -119,6 +122,7 @@ export default function App() {
                   <StatCard label="OS Corretivas" value={totalCorretivas} tone="amber" />
                   <StatCard label="OS Em aberto" value={totalAbertas} tone="red" />
                 </div>
+                <ChartsPanel equipamentos={equipamentos} ordens={ordens} />
                 <div>
                   <h3 style={{ fontSize: 16, marginBottom: 12 }}>Equipamentos cadastrados</h3>
                   <EquipmentTable equipamentos={equipamentos} onRefresh={carregarDados} />
@@ -143,6 +147,8 @@ export default function App() {
                 onRefresh={carregarDados}
               />
             )}
+
+            {abaAtiva === "simulador" && <SimuladorPanel equipamentos={equipamentos} />}
           </>
         )}
       </main>

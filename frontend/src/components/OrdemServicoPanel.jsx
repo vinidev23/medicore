@@ -48,6 +48,7 @@ export default function OrdemServicoPanel({ equipamentos, ordens, onRefresh }) {
     tipo: "corretiva",
     descricao_problema: "",
     tecnico_responsavel: "",
+    custo: "",
   });
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState(null);
@@ -70,12 +71,14 @@ export default function OrdemServicoPanel({ equipamentos, ordens, onRefresh }) {
       await api.post("/ordens-servico", {
         ...form,
         equipamento_id: Number(form.equipamento_id),
+        custo: form.custo ? Number(form.custo) : null,
       });
       setForm({
         equipamento_id: "",
         tipo: "corretiva",
         descricao_problema: "",
         tecnico_responsavel: "",
+        custo: "",
       });
       onRefresh();
     } catch (e) {
@@ -161,6 +164,20 @@ export default function OrdemServicoPanel({ equipamentos, ordens, onRefresh }) {
           <input
             value={form.tecnico_responsavel}
             onChange={(e) => setForm((f) => ({ ...f, tecnico_responsavel: e.target.value }))}
+          />
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <label style={{ fontSize: 12, color: "var(--ink-muted)" }}>
+            Custo (R$) — se já souber
+          </label>
+          <input
+            type="number"
+            step="0.01"
+            min="0"
+            value={form.custo}
+            onChange={(e) => setForm((f) => ({ ...f, custo: e.target.value }))}
+            placeholder="Ex: 350.00"
           />
         </div>
 

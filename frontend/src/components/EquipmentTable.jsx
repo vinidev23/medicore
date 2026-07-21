@@ -16,7 +16,7 @@ export default function EquipmentTable({ equipamentos, onRefresh }) {
 
     setExpandidoId(id);
 
-    // Só busca da API se ainda não tiver os dados em cache
+    // Só busca da API se ainda não tivermos os dados em cache
     if (!indicadores[id]) {
       setCarregandoId(id);
       try {

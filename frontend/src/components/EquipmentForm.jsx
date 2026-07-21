@@ -34,7 +34,6 @@ export default function EquipmentForm({ onCriado }) {
     setEnviando(true);
 
     try {
-      // Remove campos vazios opcionais antes de enviar, para não mandar string vazia onde a API espera null ou número
       const payload = {
         ...form,
         fabricante: form.fabricante || null,
