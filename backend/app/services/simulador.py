@@ -1,5 +1,5 @@
 """
-1. O custo real de manutenção do equipamento nos últimos N meses
+1. Olha o custo real de manutenção do equipamento nos últimos N meses
    (por padrão 12), somando o campo 'custo' das ordens de serviço.
 
 2. Calcula o custo médio mensal de manutenção nesse período, e
@@ -13,7 +13,6 @@
 
 4. Compara os dois: se o custo de manter for maior que o custo
    anualizado de substituir, a substituição tende a compensar.
-
 """
 from datetime import datetime, timedelta
 from typing import Optional

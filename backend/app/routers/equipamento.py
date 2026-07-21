@@ -7,8 +7,13 @@ from app.schemas.equipamento import EquipamentoCreate, EquipamentoUpdate, Equipa
 from app.schemas.simulacao import SimulacaoInput, SimulacaoResultado
 from app.services import indicadores as indicadores_service
 from app.services import simulador as simulador_service
+from app.services.auth import obter_usuario_atual
 
-router = APIRouter(prefix="/equipamentos", tags=["Equipamentos"])
+router = APIRouter(
+    prefix="/equipamentos",
+    tags=["Equipamentos"],
+    dependencies=[Depends(obter_usuario_atual)],  # protege TODAS as rotas deste router
+)
 
 
 @router.get("", response_model=list[EquipamentoRead])

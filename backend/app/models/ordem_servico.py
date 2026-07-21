@@ -1,3 +1,8 @@
+"""
+Modelo da tabela de Ordens de Serviço (OS).
+Cada linha representa um chamado/manutenção feita em um equipamento.
+É a partir dessa tabela que calculamos MTBF e MTTR.
+"""
 import enum
 from datetime import datetime
 

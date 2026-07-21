@@ -11,8 +11,13 @@ from app.schemas.ordem_servico import (
     OrdemServicoUpdate,
     OrdemServicoRead,
 )
+from app.services.auth import obter_usuario_atual
 
-router = APIRouter(prefix="/ordens-servico", tags=["Ordens de Serviço"])
+router = APIRouter(
+    prefix="/ordens-servico",
+    tags=["Ordens de Serviço"],
+    dependencies=[Depends(obter_usuario_atual)],
+)
 
 
 @router.get("", response_model=list[OrdemServicoRead])
@@ -59,6 +64,7 @@ def atualizar_ordem_servico(
         raise HTTPException(status_code=404, detail="Ordem de serviço não encontrada")
 
     dados_para_atualizar = dados.model_dump(exclude_unset=True)
+
     if (
         dados_para_atualizar.get("status") == StatusOSEnum.CONCLUIDA
         and ordem.data_conclusao is None

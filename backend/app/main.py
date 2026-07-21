@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import equipamento, ordem_servico
+from app.routers import equipamento, ordem_servico, auth
 
 app = FastAPI(
     title="MediCore - Engenharia Clínica",
@@ -17,6 +17,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth.router)
 app.include_router(equipamento.router)
 app.include_router(ordem_servico.router)
 
