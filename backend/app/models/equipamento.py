@@ -33,6 +33,7 @@ class Equipamento(Base):
     valor_aquisicao: Mapped[float] = mapped_column(Numeric(12, 2), nullable=True)
 
     # Relação: um equipamento tem várias ordens de serviço.
+    # "back_populates" conecta essa relação com o campo equivalente
     ordens_servico: Mapped[list["OrdemServico"]] = relationship(
         "OrdemServico", back_populates="equipamento", cascade="all, delete-orphan"
     )

@@ -1,9 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+
 from app.database import get_db
 from app.models.equipamento import Equipamento
 from app.schemas.equipamento import EquipamentoCreate, EquipamentoUpdate, EquipamentoRead
+from app.schemas.simulacao import SimulacaoInput, SimulacaoResultado
 from app.services import indicadores as indicadores_service
+from app.services import simulador as simulador_service
 
 router = APIRouter(prefix="/equipamentos", tags=["Equipamentos"])
 
@@ -23,7 +26,7 @@ def obter_equipamento(equipamento_id: int, db: Session = Depends(get_db)):
 
 @router.post("", response_model=EquipamentoRead, status_code=201)
 def criar_equipamento(dados: EquipamentoCreate, db: Session = Depends(get_db)):
-    # Verifica duplicidade de patrimônio ANTES de tentar salvar,
+    # Verifica duplicidade de patrimônio ANTES de tentar salvar, para dar uma mensagem de erro clara em vez de um erro genérico do banco
     existente = (
         db.query(Equipamento)
         .filter(Equipamento.numero_patrimonio == dados.numero_patrimonio)
@@ -75,3 +78,20 @@ def obter_indicadores(equipamento_id: int, db: Session = Depends(get_db)):
     if not equipamento:
         raise HTTPException(status_code=404, detail="Equipamento não encontrado")
     return indicadores_service.obter_indicadores_equipamento(db, equipamento_id)
+
+
+@router.post("/{equipamento_id}/simulacao", response_model=SimulacaoResultado)
+def simular_troca_vs_manutencao(
+    equipamento_id: int, dados: SimulacaoInput, db: Session = Depends(get_db)
+):
+    equipamento = db.get(Equipamento, equipamento_id)
+    if not equipamento:
+        raise HTTPException(status_code=404, detail="Equipamento não encontrado")
+
+    return simulador_service.calcular_simulacao(
+        db=db,
+        equipamento_id=equipamento_id,
+        valor_equipamento_novo=dados.valor_equipamento_novo,
+        vida_util_estimada_anos=dados.vida_util_estimada_anos,
+        meses_historico=dados.meses_historico,
+    )

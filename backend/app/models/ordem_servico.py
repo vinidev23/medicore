@@ -1,7 +1,7 @@
 import enum
 from datetime import datetime
 
-from sqlalchemy import String, DateTime, ForeignKey, Enum, Integer, Text
+from sqlalchemy import String, DateTime, ForeignKey, Enum, Integer, Text, Numeric
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -47,6 +47,9 @@ class OrdemServico(Base):
     data_conclusao: Mapped[datetime] = mapped_column(DateTime, nullable=True)
 
     tecnico_responsavel: Mapped[str] = mapped_column(String(100), nullable=True)
+
+    # Custo dessa manutenção específica (peças + mão de obra, por exemplo).
+    custo: Mapped[float] = mapped_column(Numeric(10, 2), nullable=True)
 
     def __repr__(self) -> str:
         return f"<OrdemServico {self.id} - {self.tipo} - {self.status}>"

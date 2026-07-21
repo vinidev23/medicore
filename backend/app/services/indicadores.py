@@ -49,7 +49,7 @@ def calcular_mtbf_horas(db: Session, equipamento_id: int) -> Optional[float]:
 
     Fórmula: tempo total decorrido entre a primeira e a última falha
     registrada, dividido pelo número de falhas (menos 1, porque
-    é contado os INTERVALOS entre falhas, não as falhas em si).
+    contamos os INTERVALOS entre falhas, não as falhas em si).
     """
     ordens = (
         db.query(OrdemServico)
@@ -61,7 +61,7 @@ def calcular_mtbf_horas(db: Session, equipamento_id: int) -> Optional[float]:
         .all()
     )
 
-    # É preciso de pelo menos 2 falhas para calcular um "intervalo entre falhas"
+    # Precisamos de pelo menos 2 falhas para calcular um "intervalo entre falhas"
     if len(ordens) < 2:
         return None
 
@@ -75,7 +75,6 @@ def calcular_mtbf_horas(db: Session, equipamento_id: int) -> Optional[float]:
 
 
 def obter_indicadores_equipamento(db: Session, equipamento_id: int) -> dict:
-    # Função de conveniência que retorna os dois indicadores juntos.
     return {
         "equipamento_id": equipamento_id,
         "mtbf_horas": calcular_mtbf_horas(db, equipamento_id),

@@ -11,6 +11,7 @@ class OrdemServicoBase(BaseModel):
     tipo: TipoOSEnum
     descricao_problema: Optional[str] = None
     tecnico_responsavel: Optional[str] = None
+    custo: Optional[float] = None
 
 
 class OrdemServicoCreate(OrdemServicoBase):
@@ -30,6 +31,7 @@ class OrdemServicoUpdate(BaseModel):
     status: Optional[StatusOSEnum] = None
     descricao_problema: Optional[str] = None
     tecnico_responsavel: Optional[str] = None
+    custo: Optional[float] = None
 
 
 class OrdemServicoRead(OrdemServicoBase):
