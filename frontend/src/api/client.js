@@ -7,6 +7,9 @@ const api = axios.create({
   },
 });
 
+// Interceptor de REQUISIÇÃO: antes de cada chamada sair, anexa o token
+// (se existir) no cabeçalho Authorization, sem precisar fazer isso
+// manualmente em cada componente.
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("medicore_token");
   if (token) {
@@ -15,6 +18,9 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Interceptor de RESPOSTA: se a API responder 401 (não autorizado),
+// significa que o token expirou ou é inválido — limpamos o login
+// e forçamos a pessoa a entrar de novo.
 api.interceptors.response.use(
   (resposta) => resposta,
   (erro) => {

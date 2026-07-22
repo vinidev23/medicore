@@ -147,6 +147,7 @@ def gerar_relatorio_pdf(db: Session) -> io.BytesIO:
         tabela_ranking.setStyle(_estilo_tabela_padrao())
         conteudo.append(tabela_ranking)
 
+    # Tabela de equipamentos com indicadores
     conteudo.append(Paragraph("Equipamentos e Indicadores", estilos["SecaoTitulo"]))
     linhas_equipamentos = [["Equipamento", "Setor", "Criticidade", "MTBF (h)", "MTTR (h)"]]
     for equipamento in equipamentos:
@@ -170,6 +171,7 @@ def gerar_relatorio_pdf(db: Session) -> io.BytesIO:
     else:
         conteudo.append(Paragraph("Nenhum equipamento cadastrado ainda.", estilos["Normal"]))
 
+    # Distribuição por status
     conteudo.append(Paragraph("Distribuição de Ordens de Serviço por Status", estilos["SecaoTitulo"]))
     contagem_status = Counter(os.status.value for os in ordens)
     if contagem_status:

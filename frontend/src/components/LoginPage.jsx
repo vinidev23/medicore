@@ -16,7 +16,6 @@ export default function LoginPage({ onLoginSucesso }) {
     setCarregando(true);
 
     try {
-      // O endpoint /auth/login espera dados de FORMULÁRIO (não JSON), por isso usamos URLSearchParams em vez de um objeto comum.
       const corpo = new URLSearchParams();
       corpo.append("username", email);
       corpo.append("password", senha);

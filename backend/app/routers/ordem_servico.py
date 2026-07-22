@@ -40,7 +40,6 @@ def obter_ordem_servico(os_id: int, db: Session = Depends(get_db)):
 
 @router.post("", response_model=OrdemServicoRead, status_code=201)
 def abrir_ordem_servico(dados: OrdemServicoCreate, db: Session = Depends(get_db)):
-    # Garante que o equipamento referenciado realmente existe
     equipamento = db.get(Equipamento, dados.equipamento_id)
     if not equipamento:
         raise HTTPException(

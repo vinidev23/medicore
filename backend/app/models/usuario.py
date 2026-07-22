@@ -8,8 +8,8 @@ from app.database import Base
 
 
 class PapelEnum(str, enum.Enum):
-    ADMIN = "admin"        # pode gerenciar usuários e tudo mais
-    TECNICO = "tecnico"    # uso operacional do dia a dia
+    ADMIN = "admin"
+    TECNICO = "tecnico"
 
 
 class Usuario(Base):

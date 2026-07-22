@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, EmailStr, ConfigDict, Field
 
 from app.models.usuario import PapelEnum
@@ -8,6 +10,11 @@ class UsuarioCreate(BaseModel):
     email: EmailStr
     senha: str = Field(min_length=6)
     papel: PapelEnum = PapelEnum.TECNICO
+
+
+class UsuarioUpdate(BaseModel):
+    papel: Optional[PapelEnum] = None
+    ativo: Optional[bool] = None
 
 
 class UsuarioRead(BaseModel):

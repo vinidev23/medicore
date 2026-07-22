@@ -17,10 +17,6 @@ from app.models.ordem_servico import OrdemServico, TipoOSEnum, StatusOSEnum
 
 
 def calcular_mttr_horas(db: Session, equipamento_id: int) -> Optional[float]:
-    """
-    Calcula o MTTR (em horas) de um equipamento, usando apenas
-    OS do tipo CORRETIVA que já foram CONCLUIDAS (têm data_conclusao).
-    """
     ordens = (
         db.query(OrdemServico)
         .filter(
@@ -54,7 +50,7 @@ def calcular_mtbf_horas(db: Session, equipamento_id: int) -> Optional[float]:
         .all()
     )
 
-    # Precisamos de pelo menos 2 falhas para calcular um "intervalo entre falhas"
+    # Precisa de pelo menos 2 falhas para calcular um "intervalo entre falhas"
     if len(ordens) < 2:
         return None
 
@@ -68,7 +64,7 @@ def calcular_mtbf_horas(db: Session, equipamento_id: int) -> Optional[float]:
 
 
 def obter_indicadores_equipamento(db: Session, equipamento_id: int) -> dict:
-    """Função de conveniência que retorna os dois indicadores juntos."""
+    # Função de conveniência que retorna os dois indicadores juntos.
     return {
         "equipamento_id": equipamento_id,
         "mtbf_horas": calcular_mtbf_horas(db, equipamento_id),

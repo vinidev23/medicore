@@ -9,7 +9,7 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models.usuario import Usuario
+from app.models.usuario import Usuario, PapelEnum
 
 SECRET_KEY = os.getenv("SECRET_KEY", "chave-insegura-de-desenvolvimento")
 ALGORITHM = "HS256"
@@ -64,3 +64,12 @@ def obter_usuario_atual(
     if usuario is None or not usuario.ativo:
         raise excecao_credenciais
     return usuario
+
+
+def exigir_admin(usuario_atual: Usuario = Depends(obter_usuario_atual)) -> Usuario:
+    if usuario_atual.papel != PapelEnum.ADMIN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Apenas administradores podem realizar esta ação",
+        )
+    return usuario_atual

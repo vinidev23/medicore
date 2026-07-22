@@ -52,6 +52,9 @@ export default function OrdemServicoPanel({ equipamentos, ordens, onRefresh }) {
   });
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState(null);
+  const [concluindoId, setConcluindoId] = useState(null);
+  const [textoObservacao, setTextoObservacao] = useState("");
+  const [enviandoConclusao, setEnviandoConclusao] = useState(false);
 
   function nomeEquipamento(id) {
     return equipamentos.find((eq) => eq.id === id)?.nome ?? `Equipamento #${id}`;
@@ -94,6 +97,37 @@ export default function OrdemServicoPanel({ equipamentos, ordens, onRefresh }) {
       onRefresh();
     } catch (e) {
       alert("Não foi possível atualizar o status.");
+    }
+  }
+
+  function abrirFormularioConclusao(osId) {
+    setConcluindoId(osId);
+    setTextoObservacao("");
+  }
+
+  function cancelarConclusao() {
+    setConcluindoId(null);
+    setTextoObservacao("");
+  }
+
+  async function confirmarConclusao(osId) {
+    if (!textoObservacao.trim()) {
+      alert("Descreva o que foi feito antes de concluir a OS.");
+      return;
+    }
+    setEnviandoConclusao(true);
+    try {
+      await api.patch(`/ordens-servico/${osId}`, {
+        status: "concluida",
+        observacao_conclusao: textoObservacao.trim(),
+      });
+      setConcluindoId(null);
+      setTextoObservacao("");
+      onRefresh();
+    } catch (e) {
+      alert("Não foi possível concluir a ordem de serviço.");
+    } finally {
+      setEnviandoConclusao(false);
     }
   }
 
@@ -215,60 +249,121 @@ export default function OrdemServicoPanel({ equipamentos, ordens, onRefresh }) {
             key={os.id}
             style={{
               display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
+              flexDirection: "column",
               border: "1px solid var(--line)",
               borderRadius: "var(--radius)",
               background: "var(--surface)",
               padding: "10px 16px",
-              gap: 12,
+              gap: 10,
             }}
           >
-            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ fontWeight: 500 }}>{nomeEquipamento(os.equipamento_id)}</span>
-                <StatusBadge status={os.status} />
-                <span className="mono" style={{ fontSize: 11, color: "var(--ink-muted)" }}>
-                  {os.tipo}
-                </span>
-              </div>
-              {os.descricao_problema && (
-                <div style={{ fontSize: 13, color: "var(--ink-muted)" }}>
-                  {os.descricao_problema}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontWeight: 500 }}>{nomeEquipamento(os.equipamento_id)}</span>
+                  <StatusBadge status={os.status} />
+                  <span className="mono" style={{ fontSize: 11, color: "var(--ink-muted)" }}>
+                    {os.tipo}
+                  </span>
                 </div>
-              )}
+                {os.descricao_problema && (
+                  <div style={{ fontSize: 13, color: "var(--ink-muted)" }}>
+                    <strong>Problema:</strong> {os.descricao_problema}
+                  </div>
+                )}
+                {os.observacao_conclusao && (
+                  <div style={{ fontSize: 13, color: "var(--teal)" }}>
+                    <strong>Serviço realizado:</strong> {os.observacao_conclusao}
+                  </div>
+                )}
+              </div>
+
+              {(os.status === "aberta" || os.status === "em_andamento") &&
+                concluindoId !== os.id && (
+                  <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                    {os.status === "aberta" && (
+                      <button
+                        onClick={() => mudarStatus(os.id, "em_andamento")}
+                        style={{
+                          border: "1px solid var(--teal)",
+                          background: "transparent",
+                          color: "var(--teal)",
+                          borderRadius: "var(--radius)",
+                          padding: "5px 10px",
+                          fontSize: 12,
+                        }}
+                      >
+                        Iniciar
+                      </button>
+                    )}
+                    <button
+                      onClick={() => abrirFormularioConclusao(os.id)}
+                      style={{
+                        border: "1px solid var(--line)",
+                        background: "var(--ink)",
+                        color: "#fff",
+                        borderRadius: "var(--radius)",
+                        padding: "5px 10px",
+                        fontSize: 12,
+                      }}
+                    >
+                      Concluir
+                    </button>
+                  </div>
+                )}
             </div>
 
-            {(os.status === "aberta" || os.status === "em_andamento") && (
-              <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
-                {os.status === "aberta" && (
+            {concluindoId === os.id && (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 8,
+                  borderTop: "1px solid var(--line)",
+                  paddingTop: 10,
+                }}
+              >
+                <label style={{ fontSize: 12, color: "var(--ink-muted)" }}>
+                  O que foi feito para resolver? *
+                </label>
+                <textarea
+                  autoFocus
+                  rows={2}
+                  value={textoObservacao}
+                  onChange={(e) => setTextoObservacao(e.target.value)}
+                  placeholder="Ex: Substituída placa de fonte e recalibrado sensor de pressão"
+                />
+                <div style={{ display: "flex", gap: 8 }}>
                   <button
-                    onClick={() => mudarStatus(os.id, "em_andamento")}
+                    onClick={() => confirmarConclusao(os.id)}
+                    disabled={enviandoConclusao}
                     style={{
-                      border: "1px solid var(--teal)",
-                      background: "transparent",
-                      color: "var(--teal)",
+                      background: "var(--teal)",
+                      color: "#fff",
+                      border: "none",
                       borderRadius: "var(--radius)",
-                      padding: "5px 10px",
-                      fontSize: 12,
+                      padding: "6px 14px",
+                      fontSize: 13,
+                      fontWeight: 600,
+                      opacity: enviandoConclusao ? 0.6 : 1,
                     }}
                   >
-                    Iniciar
+                    {enviandoConclusao ? "Salvando..." : "Confirmar conclusão"}
                   </button>
-                )}
-                <button
-                  onClick={() => mudarStatus(os.id, "concluida")}
-                  style={{
-                    border: "1px solid var(--line)",
-                    background: "var(--ink)",
-                    color: "#fff",
-                    borderRadius: "var(--radius)",
-                    padding: "5px 10px",
-                    fontSize: 12,
-                  }}
-                >
-                  Concluir
-                </button>
+                  <button
+                    onClick={cancelarConclusao}
+                    style={{
+                      border: "1px solid var(--line)",
+                      background: "transparent",
+                      color: "var(--ink-muted)",
+                      borderRadius: "var(--radius)",
+                      padding: "6px 14px",
+                      fontSize: 13,
+                    }}
+                  >
+                    Cancelar
+                  </button>
+                </div>
               </div>
             )}
           </div>

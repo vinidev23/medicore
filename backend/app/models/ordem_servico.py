@@ -25,7 +25,6 @@ class OrdemServico(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
 
-    # Chave estrangeira: liga essa OS a um equipamento específico.
     equipamento_id: Mapped[int] = mapped_column(
         ForeignKey("equipamentos.id"), nullable=False
     )
@@ -50,6 +49,8 @@ class OrdemServico(Base):
 
     # Custo dessa manutenção específica (peças + mão de obra, por exemplo).
     custo: Mapped[float] = mapped_column(Numeric(10, 2), nullable=True)
+
+    observacao_conclusao: Mapped[str] = mapped_column(Text, nullable=True)
 
     def __repr__(self) -> str:
         return f"<OrdemServico {self.id} - {self.tipo} - {self.status}>"

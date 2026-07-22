@@ -15,11 +15,6 @@ class OrdemServicoBase(BaseModel):
 
 
 class OrdemServicoCreate(OrdemServicoBase):
-    """
-    Ao abrir uma OS, não pedimos data_abertura: o servidor define
-    automaticamente como "agora", garantindo que ninguém possa
-    forjar uma data de abertura diferente da real.
-    """
     pass
 
 
@@ -28,6 +23,7 @@ class OrdemServicoUpdate(BaseModel):
     descricao_problema: Optional[str] = None
     tecnico_responsavel: Optional[str] = None
     custo: Optional[float] = None
+    observacao_conclusao: Optional[str] = None
 
 
 class OrdemServicoRead(OrdemServicoBase):
@@ -35,5 +31,6 @@ class OrdemServicoRead(OrdemServicoBase):
     status: StatusOSEnum
     data_abertura: datetime
     data_conclusao: Optional[datetime] = None
+    observacao_conclusao: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
