@@ -72,7 +72,7 @@ export default function SimuladorPanel({ equipamentos }) {
 
         <form
           onSubmit={rodarSimulacao}
-          style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 12 }}
+          style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12 }}
         >
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
             <label style={{ fontSize: 12, color: "var(--ink-muted)" }}>Equipamento *</label>

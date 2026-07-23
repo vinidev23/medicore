@@ -108,7 +108,7 @@ export default function ChartsPanel({ equipamentos, ordens }) {
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "1.4fr 1fr",
+        gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
         gap: 16,
       }}
     >

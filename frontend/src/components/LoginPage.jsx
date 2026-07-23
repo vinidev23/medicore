@@ -66,7 +66,7 @@ export default function LoginPage({ onLoginSucesso }) {
     >
       <div
         style={{
-          width: 360,
+          width: "min(360px, 90vw)",
           background: "var(--surface)",
           border: "1px solid var(--line)",
           borderRadius: "var(--radius)",

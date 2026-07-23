@@ -95,10 +95,10 @@ export default function App() {
         style={{
           borderBottom: "1px solid var(--line)",
           background: "var(--surface)",
-          padding: "20px 32px 0",
+          padding: "20px clamp(12px, 4vw, 32px) 0",
         }}
       >
-        <div style={{ display: "flex", alignItems: "baseline", gap: 12, justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 12, justifyContent: "space-between", flexWrap: "wrap" }}>
           <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
             <h1 style={{ fontSize: 20, letterSpacing: "-0.01em" }}>MediCore</h1>
             <span style={{ fontSize: 13, color: "var(--ink-muted)" }}>
@@ -129,7 +129,7 @@ export default function App() {
           style={{ width: "100%", height: 14, margin: "12px 0 0" }}
         />
 
-        <nav style={{ display: "flex", gap: 4, marginTop: 4 }}>
+        <nav style={{ display: "flex", gap: 4, marginTop: 4, overflowX: "auto", whiteSpace: "nowrap" }}>
           {ABAS.map((aba) => (
             <button
               key={aba.id}
@@ -153,7 +153,7 @@ export default function App() {
         </nav>
       </header>
 
-      <main style={{ maxWidth: 980, margin: "0 auto", padding: "24px 32px" }}>
+      <main style={{ maxWidth: 980, margin: "0 auto", padding: "24px clamp(12px, 4vw, 32px)" }}>
         {erroConexao && (
           <div
             style={{

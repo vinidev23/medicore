@@ -147,7 +147,7 @@ export default function OrdemServicoPanel({ equipamentos, ordens, onRefresh }) {
       >
         <h3 style={{ fontSize: 16 }}>Abrir ordem de serviço</h3>
 
-        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 12 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
             <label style={{ fontSize: 12, color: "var(--ink-muted)" }}>Equipamento *</label>
             <select
@@ -257,7 +257,7 @@ export default function OrdemServicoPanel({ equipamentos, ordens, onRefresh }) {
               gap: 10,
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <span style={{ fontWeight: 500 }}>{nomeEquipamento(os.equipamento_id)}</span>

@@ -71,7 +71,7 @@ export default function EquipmentForm({ onCriado }) {
     >
       <h3 style={{ fontSize: 16 }}>Cadastrar equipamento</h3>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
         <div style={campoStyle}>
           <label style={labelStyle}>Nome *</label>
           <input
