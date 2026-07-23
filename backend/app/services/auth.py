@@ -2,10 +2,10 @@ import os
 from datetime import datetime, timedelta
 from typing import Optional
 
+import bcrypt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -15,18 +15,18 @@ SECRET_KEY = os.getenv("SECRET_KEY", "chave-insegura-de-desenvolvimento")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "480"))
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-# Isso diz ao FastAPI onde fica o endpoint de login, para gerar automaticamente o botão "Authorize" na documentação /docs
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 def verificar_senha(senha_texto_puro: str, senha_hash: str) -> bool:
-    return pwd_context.verify(senha_texto_puro, senha_hash)
+    senha_bytes = senha_texto_puro.encode("utf-8")[:72]
+    return bcrypt.checkpw(senha_bytes, senha_hash.encode("utf-8"))
 
 
 def gerar_hash_senha(senha_texto_puro: str) -> str:
-    return pwd_context.hash(senha_texto_puro)
+    senha_bytes = senha_texto_puro.encode("utf-8")[:72]
+    hash_bytes = bcrypt.hashpw(senha_bytes, bcrypt.gensalt())
+    return hash_bytes.decode("utf-8")
 
 
 def criar_token_acesso(dados: dict) -> str:
