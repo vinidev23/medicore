@@ -74,43 +74,11 @@ textarea {
   font-size: 14px;
   background: var(--surface);
   color: var(--ink);
-  width: 100%;
 }
 
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;
     transition: none !important;
-  }
-}
-
-.form-grid,
-.equipamento-form-grid,
-form {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
-
-.form-grid-full,
-.equipamento-form-grid .full-width {
-  grid-column: 1 / -1;
-}
-
-@media (max-width: 768px) {
-  .form-grid,
-  .equipamento-form-grid,
-  .charts-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  .chart-card-full,
-  .form-grid-full,
-  .equipamento-form-grid .full-width {
-    grid-column: auto !important;
-  }
-  
-  body {
-    padding: 8px;
   }
 }
