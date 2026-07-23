@@ -13,7 +13,6 @@
 
 4. Compara os dois: se o custo de manter for maior que o custo
    anualizado de substituir, a substituição tende a compensar.
-
 """
 from datetime import datetime, timedelta
 from typing import Optional

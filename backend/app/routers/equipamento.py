@@ -12,7 +12,7 @@ from app.services.auth import obter_usuario_atual
 router = APIRouter(
     prefix="/equipamentos",
     tags=["Equipamentos"],
-    dependencies=[Depends(obter_usuario_atual)], # protege TODAS as rotas deste router
+    dependencies=[Depends(obter_usuario_atual)],  # protege TODAS as rotas deste router
 )
 
 
@@ -31,7 +31,7 @@ def obter_equipamento(equipamento_id: int, db: Session = Depends(get_db)):
 
 @router.post("", response_model=EquipamentoRead, status_code=201)
 def criar_equipamento(dados: EquipamentoCreate, db: Session = Depends(get_db)):
-    # Verifica duplicidade de patrimônio ANTES de tentar salvar, para dar uma mensagem de erro clara em vez de um erro genérico do banco.
+    # Verifica duplicidade de patrimônio ANTES de tentar salvar, para dar uma mensagem de erro clara em vez de um erro genérico do banco
     existente = (
         db.query(Equipamento)
         .filter(Equipamento.numero_patrimonio == dados.numero_patrimonio)
@@ -46,7 +46,7 @@ def criar_equipamento(dados: EquipamentoCreate, db: Session = Depends(get_db)):
     novo_equipamento = Equipamento(**dados.model_dump())
     db.add(novo_equipamento)
     db.commit()
-    db.refresh(novo_equipamento)
+    db.refresh(novo_equipamento)  # recarrega o objeto com o "id" gerado pelo banco
     return novo_equipamento
 
 

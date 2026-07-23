@@ -2,6 +2,8 @@ import { useState } from "react";
 import axios from "axios";
 import PulseLine from "./PulseLine";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
 export default function LoginPage({ onLoginSucesso }) {
   const [modo, setModo] = useState("login");
   const [nome, setNome] = useState("");
@@ -20,7 +22,7 @@ export default function LoginPage({ onLoginSucesso }) {
       corpo.append("username", email);
       corpo.append("password", senha);
 
-      const resposta = await axios.post("http://localhost:8000/auth/login", corpo, {
+      const resposta = await axios.post(`${API_URL}/auth/login`, corpo, {
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
       });
 
@@ -40,7 +42,7 @@ export default function LoginPage({ onLoginSucesso }) {
     setCarregando(true);
 
     try {
-      await axios.post("http://localhost:8000/auth/registrar", {
+      await axios.post(`${API_URL}/auth/registrar`, {
         nome,
         email,
         senha,

@@ -1,5 +1,4 @@
 """
-Conceitos:
 - MTTR (Mean Time To Repair): tempo médio para CONSERTAR um equipamento.
   Calculado como a média de (data_conclusao - data_abertura) das OS.
 
@@ -64,7 +63,6 @@ def calcular_mtbf_horas(db: Session, equipamento_id: int) -> Optional[float]:
 
 
 def obter_indicadores_equipamento(db: Session, equipamento_id: int) -> dict:
-    # Função de conveniência que retorna os dois indicadores juntos.
     return {
         "equipamento_id": equipamento_id,
         "mtbf_horas": calcular_mtbf_horas(db, equipamento_id),

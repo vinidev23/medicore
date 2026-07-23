@@ -47,7 +47,6 @@ class OrdemServico(Base):
 
     tecnico_responsavel: Mapped[str] = mapped_column(String(100), nullable=True)
 
-    # Custo dessa manutenção específica (peças + mão de obra, por exemplo).
     custo: Mapped[float] = mapped_column(Numeric(10, 2), nullable=True)
 
     observacao_conclusao: Mapped[str] = mapped_column(Text, nullable=True)

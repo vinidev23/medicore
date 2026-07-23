@@ -40,6 +40,7 @@ def obter_ordem_servico(os_id: int, db: Session = Depends(get_db)):
 
 @router.post("", response_model=OrdemServicoRead, status_code=201)
 def abrir_ordem_servico(dados: OrdemServicoCreate, db: Session = Depends(get_db)):
+    # Garante que o equipamento referenciado realmente existe
     equipamento = db.get(Equipamento, dados.equipamento_id)
     if not equipamento:
         raise HTTPException(
@@ -63,7 +64,7 @@ def atualizar_ordem_servico(
         raise HTTPException(status_code=404, detail="Ordem de serviço não encontrada")
 
     dados_para_atualizar = dados.model_dump(exclude_unset=True)
-
+    
     if (
         dados_para_atualizar.get("status") == StatusOSEnum.CONCLUIDA
         and ordem.data_conclusao is None
