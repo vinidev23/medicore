@@ -11,7 +11,6 @@ class OrdemServicoBase(BaseModel):
     tipo: TipoOSEnum
     descricao_problema: Optional[str] = None
     tecnico_responsavel: Optional[str] = None
-    custo: Optional[float] = None
 
 
 class OrdemServicoCreate(OrdemServicoBase):
@@ -31,6 +30,7 @@ class OrdemServicoRead(OrdemServicoBase):
     status: StatusOSEnum
     data_abertura: datetime
     data_conclusao: Optional[datetime] = None
+    custo: Optional[float] = None
     observacao_conclusao: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)

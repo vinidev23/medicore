@@ -48,12 +48,12 @@ export default function OrdemServicoPanel({ equipamentos, ordens, onRefresh }) {
     tipo: "corretiva",
     descricao_problema: "",
     tecnico_responsavel: "",
-    custo: "",
   });
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState(null);
   const [concluindoId, setConcluindoId] = useState(null);
   const [textoObservacao, setTextoObservacao] = useState("");
+  const [textoCusto, setTextoCusto] = useState("");
   const [enviandoConclusao, setEnviandoConclusao] = useState(false);
 
   function nomeEquipamento(id) {
@@ -74,14 +74,12 @@ export default function OrdemServicoPanel({ equipamentos, ordens, onRefresh }) {
       await api.post("/ordens-servico", {
         ...form,
         equipamento_id: Number(form.equipamento_id),
-        custo: form.custo ? Number(form.custo) : null,
       });
       setForm({
         equipamento_id: "",
         tipo: "corretiva",
         descricao_problema: "",
         tecnico_responsavel: "",
-        custo: "",
       });
       onRefresh();
     } catch (e) {
@@ -103,11 +101,13 @@ export default function OrdemServicoPanel({ equipamentos, ordens, onRefresh }) {
   function abrirFormularioConclusao(osId) {
     setConcluindoId(osId);
     setTextoObservacao("");
+    setTextoCusto("");
   }
 
   function cancelarConclusao() {
     setConcluindoId(null);
     setTextoObservacao("");
+    setTextoCusto("");
   }
 
   async function confirmarConclusao(osId) {
@@ -120,9 +120,11 @@ export default function OrdemServicoPanel({ equipamentos, ordens, onRefresh }) {
       await api.patch(`/ordens-servico/${osId}`, {
         status: "concluida",
         observacao_conclusao: textoObservacao.trim(),
+        custo: textoCusto ? Number(textoCusto) : null,
       });
       setConcluindoId(null);
       setTextoObservacao("");
+      setTextoCusto("");
       onRefresh();
     } catch (e) {
       alert("Não foi possível concluir a ordem de serviço.");
@@ -201,20 +203,6 @@ export default function OrdemServicoPanel({ equipamentos, ordens, onRefresh }) {
           />
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-          <label style={{ fontSize: 12, color: "var(--ink-muted)" }}>
-            Custo (R$) — se já souber
-          </label>
-          <input
-            type="number"
-            step="0.01"
-            min="0"
-            value={form.custo}
-            onChange={(e) => setForm((f) => ({ ...f, custo: e.target.value }))}
-            placeholder="Ex: 350.00"
-          />
-        </div>
-
         {erro && <div style={{ color: "var(--red)", fontSize: 13 }}>{erro}</div>}
 
         <button
@@ -276,6 +264,15 @@ export default function OrdemServicoPanel({ equipamentos, ordens, onRefresh }) {
                     <strong>Serviço realizado:</strong> {os.observacao_conclusao}
                   </div>
                 )}
+                {os.custo != null && (
+                  <div style={{ fontSize: 13, color: "var(--ink-muted)" }}>
+                    <strong>Custo:</strong>{" "}
+                    {Number(os.custo).toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </div>
+                )}
               </div>
 
               {(os.status === "aberta" || os.status === "em_andamento") &&
@@ -332,6 +329,17 @@ export default function OrdemServicoPanel({ equipamentos, ordens, onRefresh }) {
                   value={textoObservacao}
                   onChange={(e) => setTextoObservacao(e.target.value)}
                   placeholder="Ex: Substituída placa de fonte e recalibrado sensor de pressão"
+                />
+                <label style={{ fontSize: 12, color: "var(--ink-muted)" }}>
+                  Custo (R$)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={textoCusto}
+                  onChange={(e) => setTextoCusto(e.target.value)}
+                  placeholder="Ex: 350.00"
                 />
                 <div style={{ display: "flex", gap: 8 }}>
                   <button
