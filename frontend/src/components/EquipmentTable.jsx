@@ -88,9 +88,32 @@ export default function EquipmentTable({ equipamentos, onRefresh }) {
                   #{equipamento.numero_patrimonio}
                 </span>
                 <CriticidadeBadge criticidade={equipamento.criticidade} />
+                {equipamento.emprestado_atualmente && (
+                  <span
+                    className="mono"
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 600,
+                      textTransform: "uppercase",
+                      padding: "4px 8px",
+                      borderRadius: 4,
+                      background: "var(--amber-soft)",
+                      color: "var(--amber)",
+                    }}
+                  >
+                    Emprestado
+                  </span>
+                )}
               </div>
               <div style={{ fontSize: 13, color: "var(--ink-muted)" }}>
-                {equipamento.setor}
+                {equipamento.emprestado_atualmente ? (
+                  <>
+                    Setor de lotação: {equipamento.setor} · Atualmente em:{" "}
+                    <strong>{equipamento.localizacao_atual}</strong>
+                  </>
+                ) : (
+                  equipamento.setor
+                )}
                 {equipamento.fabricante && ` · ${equipamento.fabricante}`}
                 {equipamento.modelo && ` ${equipamento.modelo}`}
               </div>

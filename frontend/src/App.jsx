@@ -8,11 +8,13 @@ import OrdemServicoPanel from "./components/OrdemServicoPanel";
 import ChartsPanel from "./components/ChartsPanel";
 import SimuladorPanel from "./components/SimuladorPanel";
 import LoginPage from "./components/LoginPage";
+import EmprestimosPanel from "./components/EmprestimosPanel";
 
 const ABAS = [
   { id: "painel", label: "Painel" },
   { id: "equipamentos", label: "Equipamentos" },
   { id: "ordens", label: "Ordens de Serviço" },
+  { id: "emprestimos", label: "Empréstimos" },
   { id: "simulador", label: "Simulador" },
 ];
 
@@ -24,6 +26,7 @@ export default function App() {
   const [abaAtiva, setAbaAtiva] = useState("painel");
   const [equipamentos, setEquipamentos] = useState([]);
   const [ordens, setOrdens] = useState([]);
+  const [emprestimos, setEmprestimos] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erroConexao, setErroConexao] = useState(false);
 
@@ -59,12 +62,14 @@ export default function App() {
 
   const carregarDados = useCallback(async () => {
     try {
-      const [respEquipamentos, respOrdens] = await Promise.all([
+      const [respEquipamentos, respOrdens, respEmprestimos] = await Promise.all([
         api.get("/equipamentos"),
         api.get("/ordens-servico"),
+        api.get("/emprestimos"),
       ]);
       setEquipamentos(respEquipamentos.data);
       setOrdens(respOrdens.data);
+      setEmprestimos(respEmprestimos.data);
       setErroConexao(false);
     } catch (erro) {
       console.error("Erro ao carregar dados", erro);
@@ -83,6 +88,9 @@ export default function App() {
   const totalCorretivas = ordens.filter((os) => os.tipo === "corretiva").length;
   const totalAbertas = ordens.filter(
     (os) => os.status === "aberta" || os.status === "em_andamento"
+  ).length;
+  const totalEmprestimosAtrasados = emprestimos.filter(
+    (e) => e.status === "em_andamento" && e.atrasado
   ).length;
 
   if (!usuario) {
@@ -140,6 +148,9 @@ export default function App() {
                 padding: "10px 14px",
                 fontSize: 14,
                 fontWeight: 500,
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
                 color: abaAtiva === aba.id ? "var(--teal)" : "var(--ink-muted)",
                 borderBottom:
                   abaAtiva === aba.id
@@ -148,6 +159,21 @@ export default function App() {
               }}
             >
               {aba.label}
+              {aba.id === "emprestimos" && totalEmprestimosAtrasados > 0 && (
+                <span
+                  className="mono"
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 700,
+                    background: "var(--red)",
+                    color: "#fff",
+                    borderRadius: 10,
+                    padding: "1px 7px",
+                  }}
+                >
+                  {totalEmprestimosAtrasados}
+                </span>
+              )}
             </button>
           ))}
         </nav>
@@ -189,6 +215,11 @@ export default function App() {
                     <StatCard label="Equipamentos" value={equipamentos.length} tone="neutral" />
                     <StatCard label="OS Corretivas" value={totalCorretivas} tone="amber" />
                     <StatCard label="OS Em aberto" value={totalAbertas} tone="red" />
+                    <StatCard
+                      label="Devoluções atrasadas"
+                      value={totalEmprestimosAtrasados}
+                      tone={totalEmprestimosAtrasados > 0 ? "red" : "neutral"}
+                    />
                   </div>
                   <button
                     onClick={baixarRelatorioPDF}
@@ -230,6 +261,14 @@ export default function App() {
               <OrdemServicoPanel
                 equipamentos={equipamentos}
                 ordens={ordens}
+                onRefresh={carregarDados}
+              />
+            )}
+
+            {abaAtiva === "emprestimos" && (
+              <EmprestimosPanel
+                equipamentos={equipamentos}
+                emprestimos={emprestimos}
                 onRefresh={carregarDados}
               />
             )}

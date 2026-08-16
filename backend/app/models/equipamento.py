@@ -1,7 +1,7 @@
 import enum
 from datetime import date
 
-from sqlalchemy import String, Date, Numeric, Enum, Integer
+from sqlalchemy import String, Date, Numeric, Enum, Integer, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -32,9 +32,20 @@ class Equipamento(Base):
     data_aquisicao: Mapped[date] = mapped_column(Date, nullable=True)
     valor_aquisicao: Mapped[float] = mapped_column(Numeric(12, 2), nullable=True)
 
+    # Localização física atual do equipamento. Em condições normais é igual a
+    # "setor" (setor de lotação), mas diverge quando o equipamento está
+    # emprestado temporariamente para outro setor.
+    localizacao_atual: Mapped[str] = mapped_column(String(100), nullable=True)
+    emprestado_atualmente: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+
     # Relação: um equipamento tem várias ordens de serviço. "back_populates" conecta essa relação com o campo equivalente
     ordens_servico: Mapped[list["OrdemServico"]] = relationship(
         "OrdemServico", back_populates="equipamento", cascade="all, delete-orphan"
+    )
+
+    # Relação: histórico de empréstimos internos (transferências entre setores)
+    emprestimos: Mapped[list["EmprestimoInterno"]] = relationship(
+        "EmprestimoInterno", back_populates="equipamento", cascade="all, delete-orphan"
     )
 
     def __repr__(self) -> str:

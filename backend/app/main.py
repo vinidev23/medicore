@@ -3,7 +3,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import equipamento, ordem_servico, auth, relatorios
+from app.routers import equipamento, ordem_servico, auth, relatorios, emprestimo
 
 app = FastAPI(
     title="MediCore - Engenharia Clínica",
@@ -28,6 +28,7 @@ app.include_router(auth.router)
 app.include_router(equipamento.router)
 app.include_router(ordem_servico.router)
 app.include_router(relatorios.router)
+app.include_router(emprestimo.router)
 
 
 @app.get("/")
