@@ -67,6 +67,15 @@ class CalibracaoEquipamento(Base):
         cascade="all, delete-orphan",
         order_by="CalibracaoParametro.id",
     )
+    
+    resultado_geral = Column(
+    Enum(
+        ResultadoCalibracaoEnum,
+        name="resultadocalibracaoenum",
+        values_callable=lambda obj: [e.value.lower() for e in obj]
+    ),
+    nullable=False
+)
 
     def __repr__(self) -> str:
         return (
