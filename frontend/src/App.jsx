@@ -9,12 +9,14 @@ import ChartsPanel from "./components/ChartsPanel";
 import SimuladorPanel from "./components/SimuladorPanel";
 import LoginPage from "./components/LoginPage";
 import EmprestimosPanel from "./components/EmprestimosPanel";
+import CalibracaoPanel from "./components/CalibracaoPanel";
 
 const ABAS = [
   { id: "painel", label: "Painel" },
   { id: "equipamentos", label: "Equipamentos" },
   { id: "ordens", label: "Ordens de Serviço" },
   { id: "emprestimos", label: "Empréstimos" },
+  { id: "calibracoes", label: "Calibrações" },
   { id: "simulador", label: "Simulador" },
 ];
 
@@ -27,6 +29,7 @@ export default function App() {
   const [equipamentos, setEquipamentos] = useState([]);
   const [ordens, setOrdens] = useState([]);
   const [emprestimos, setEmprestimos] = useState([]);
+  const [calibracoes, setCalibracoes] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erroConexao, setErroConexao] = useState(false);
 
@@ -62,14 +65,16 @@ export default function App() {
 
   const carregarDados = useCallback(async () => {
     try {
-      const [respEquipamentos, respOrdens, respEmprestimos] = await Promise.all([
+      const [respEquipamentos, respOrdens, respEmprestimos, respCalibracoes] = await Promise.all([
         api.get("/equipamentos"),
         api.get("/ordens-servico"),
         api.get("/emprestimos"),
+        api.get("/calibracoes"),
       ]);
       setEquipamentos(respEquipamentos.data);
       setOrdens(respOrdens.data);
       setEmprestimos(respEmprestimos.data);
+      setCalibracoes(respCalibracoes.data);
       setErroConexao(false);
     } catch (erro) {
       console.error("Erro ao carregar dados", erro);
@@ -92,6 +97,13 @@ export default function App() {
   const totalEmprestimosAtrasados = emprestimos.filter(
     (e) => e.status === "em_andamento" && e.atrasado
   ).length;
+  const totalCalibracoesVencidas = calibracoes.filter((c) => {
+    if (!c.proxima_calibracao) return false;
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    const [ano, mes, dia] = c.proxima_calibracao.split("-").map(Number);
+    return new Date(ano, mes - 1, dia) < hoje;
+  }).length;
 
   if (!usuario) {
     return <LoginPage onLoginSucesso={setUsuario} />;
@@ -172,6 +184,21 @@ export default function App() {
                   }}
                 >
                   {totalEmprestimosAtrasados}
+                </span>
+              )}
+              {aba.id === "calibracoes" && totalCalibracoesVencidas > 0 && (
+                <span
+                  className="mono"
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 700,
+                    background: "var(--amber)",
+                    color: "#fff",
+                    borderRadius: 10,
+                    padding: "1px 7px",
+                  }}
+                >
+                  {totalCalibracoesVencidas}
                 </span>
               )}
             </button>
@@ -269,6 +296,14 @@ export default function App() {
               <EmprestimosPanel
                 equipamentos={equipamentos}
                 emprestimos={emprestimos}
+                onRefresh={carregarDados}
+              />
+            )}
+
+            {abaAtiva === "calibracoes" && (
+              <CalibracaoPanel
+                equipamentos={equipamentos}
+                calibracoes={calibracoes}
                 onRefresh={carregarDados}
               />
             )}

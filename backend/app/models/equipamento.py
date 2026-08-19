@@ -48,5 +48,10 @@ class Equipamento(Base):
         "EmprestimoInterno", back_populates="equipamento", cascade="all, delete-orphan"
     )
 
+    # Relação: histórico de calibrações realizadas no equipamento
+    calibracoes: Mapped[list["CalibracaoEquipamento"]] = relationship(
+        "CalibracaoEquipamento", back_populates="equipamento", cascade="all, delete-orphan"
+    )
+
     def __repr__(self) -> str:
         return f"<Equipamento {self.numero_patrimonio} - {self.nome}>"

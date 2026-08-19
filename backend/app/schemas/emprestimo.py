@@ -1,7 +1,7 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict, field_serializer, model_validator
 
 from app.models.emprestimo import StatusEmprestimoEnum
 
@@ -53,3 +53,16 @@ class EmprestimoRead(EmprestimoBase):
         else:
             self.atrasado = False
         return self
+
+    # "data_emprestimo" e "data_devolucao" são gravadas no banco como UTC
+    # "naive" (sem informação de fuso horário). Sem marcar explicitamente
+    # que esse valor é UTC, o navegador do usuário interpretava o horário
+    # como se já estivesse no fuso local e exibia a hora da devolução
+    # adiantada em relação ao horário real de fechamento.
+    @field_serializer("data_emprestimo", "data_devolucao")
+    def serializar_utc(self, valor: Optional[datetime]) -> Optional[str]:
+        if valor is None:
+            return None
+        if valor.tzinfo is None:
+            valor = valor.replace(tzinfo=timezone.utc)
+        return valor.isoformat()
