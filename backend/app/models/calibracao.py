@@ -71,8 +71,7 @@ class CalibracaoEquipamento(Base):
     resultado_geral = Column(
     Enum(
         ResultadoCalibracaoEnum,
-        name="resultadocalibracaoenum",
-        values_callable=lambda obj: [e.value.lower() for e in obj]
+        values_callable=lambda obj: [e.value for e in obj]
     ),
     nullable=False
 )
