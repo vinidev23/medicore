@@ -1,7 +1,7 @@
 from datetime import date, datetime, timezone
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, Field, field_serializer, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_serializer, model_validator, field_validator
 
 from app.models.calibracao import ResultadoCalibracaoEnum
 
@@ -14,6 +14,13 @@ class CalibracaoParametroBase(BaseModel):
     tolerancia_maxima: float = Field(
         ..., description="Desvio máximo absoluto aceito entre referência e medido"
     )
+    
+    @field_validator('tolerancia_maxima', mode='before')
+    @classmethod
+    def clean_tolerancia(cls, v):
+        if isinstance(v , str):
+            v= v.replace('%', '').replace(',', '.').strip()
+            return float(v)
 
 
 class CalibracaoParametroCreate(CalibracaoParametroBase):
