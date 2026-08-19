@@ -15,6 +15,8 @@ function formatarData(iso) {
 
 function formatarDataSimples(iso) {
   if (!iso) return "—";
+  // Campos "date" puros (YYYY-MM-DD) não têm hora nem fuso — monta a data
+  // manualmente para não sofrer o mesmo problema de conversão de fuso.
   const [ano, mes, dia] = iso.split("-");
   return `${dia}/${mes}/${ano}`;
 }
@@ -351,31 +353,35 @@ export default function CalibracaoPanel({ equipamentos, calibracoes, onRefresh }
                 key={p._key}
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "1.6fr 0.9fr 1fr 1fr 1fr auto",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))",
                   gap: 8,
                   alignItems: "end",
                   background: "var(--surface-sunken)",
                   borderRadius: "var(--radius)",
                   padding: 10,
+                  width: "100%",
+                  boxSizing: "border-box",
                 }}
               >
-                <div style={campoStyle}>
+                <div style={{ ...campoStyle, minWidth: 0 }}>
                   <label style={labelStyle}>Grandeza</label>
                   <input
                     value={p.grandeza}
                     onChange={(e) => atualizarParametro(p._key, "grandeza", e.target.value)}
                     placeholder="Ex: Vazão"
+                    style={{ width: "100%", boxSizing: "border-box" }}
                   />
                 </div>
-                <div style={campoStyle}>
+                <div style={{ ...campoStyle, minWidth: 0 }}>
                   <label style={labelStyle}>Unidade</label>
                   <input
                     value={p.unidade}
                     onChange={(e) => atualizarParametro(p._key, "unidade", e.target.value)}
                     placeholder="mL/h"
+                    style={{ width: "100%", boxSizing: "border-box" }}
                   />
                 </div>
-                <div style={campoStyle}>
+                <div style={{ ...campoStyle, minWidth: 0 }}>
                   <label style={labelStyle}>Referência</label>
                   <input
                     type="number"
@@ -384,18 +390,20 @@ export default function CalibracaoPanel({ equipamentos, calibracoes, onRefresh }
                     onChange={(e) =>
                       atualizarParametro(p._key, "valor_referencia", e.target.value)
                     }
+                    style={{ width: "100%", boxSizing: "border-box" }}
                   />
                 </div>
-                <div style={campoStyle}>
+                <div style={{ ...campoStyle, minWidth: 0 }}>
                   <label style={labelStyle}>Medido</label>
                   <input
                     type="number"
                     step="any"
                     value={p.valor_medido}
                     onChange={(e) => atualizarParametro(p._key, "valor_medido", e.target.value)}
+                    style={{ width: "100%", boxSizing: "border-box" }}
                   />
                 </div>
-                <div style={campoStyle}>
+                <div style={{ ...campoStyle, minWidth: 0 }}>
                   <label style={labelStyle}>Tolerância (±)</label>
                   <input
                     type="number"
@@ -405,9 +413,18 @@ export default function CalibracaoPanel({ equipamentos, calibracoes, onRefresh }
                     onChange={(e) =>
                       atualizarParametro(p._key, "tolerancia_maxima", e.target.value)
                     }
+                    style={{ width: "100%", boxSizing: "border-box" }}
                   />
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 4, alignItems: "flex-end" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 4,
+                    alignItems: "flex-start",
+                    minWidth: 0,
+                  }}
+                >
                   {previa && (
                     <span
                       className="mono"
