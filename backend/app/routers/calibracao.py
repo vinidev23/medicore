@@ -52,68 +52,55 @@ def obter_calibracao(calibracao_id: int, db: Session = Depends(get_db)):
 
 @router.post("", response_model=CalibracaoRead, status_code=201)
 def registrar_calibracao(dados: CalibracaoCreate, db: Session = Depends(get_db)):
-    try:
-        equipamento = db.get(Equipamento, dados.equipamento_id)
-        if not equipamento:
-            raise HTTPException(
-                status_code=404,
-                detail=f"Equipamento com id {dados.equipamento_id} não encontrado",
-            )
-
-        nova_calibracao = CalibracaoEquipamento(
-            equipamento_id=dados.equipamento_id,
-            data_calibracao=dados.data_calibracao,
-            tecnico_responsavel=dados.tecnico_responsavel,
-            instrumento_padrao=dados.instrumento_padrao,
-            certificado_numero=dados.certificado_numero,
-            proxima_calibracao=dados.proxima_calibracao,
-            observacoes=dados.observacoes,
-        )
-
-        todos_dentro_da_tolerancia = True
-        for parametro in dados.parametros:
-            erro = round(parametro.valor_medido - parametro.valor_referencia, 4)
-            dentro_tolerancia = abs(erro) <= parametro.tolerancia_maxima
-            if not dentro_tolerancia:
-                todos_dentro_da_tolerancia = False
-
-            nova_calibracao.parametros.append(
-                CalibracaoParametro(
-                    grandeza=parametro.grandeza,
-                    unidade=parametro.unidade,
-                    valor_referencia=parametro.valor_referencia,
-                    valor_medido=parametro.valor_medido,
-                    tolerancia_maxima=parametro.tolerancia_maxima,
-                    erro=erro,
-                    dentro_tolerancia=dentro_tolerancia,
-                )
-            )
-
-        if dados.ajustado:
-            nova_calibracao.resultado_geral = ResultadoCalibracaoEnum.AJUSTADO
-        elif todos_dentro_da_tolerancia:
-            nova_calibracao.resultado_geral = ResultadoCalibracaoEnum.APROVADO
-        else:
-            nova_calibracao.resultado_geral = ResultadoCalibracaoEnum.REPROVADO
-
-        db.add(nova_calibracao)
-        db.commit()
-
-        calibracao_salva = _com_parametros(
-            db.query(CalibracaoEquipamento).filter(CalibracaoEquipamento.id == nova_calibracao.id)
-        ).first()
-
-        return calibracao_salva
-
-    except HTTPException:
-        db.rollback()
-        raise
-    except Exception as e:
-        db.rollback()
+    equipamento = db.get(Equipamento, dados.equipamento_id)
+    if not equipamento:
         raise HTTPException(
-            status_code=400,
-            detail=f"Falha ao registrar calibração: {str(e)}"
+            status_code=404,
+            detail=f"Equipamento com id {dados.equipamento_id} não encontrado",
         )
+
+    nova_calibracao = CalibracaoEquipamento(
+        equipamento_id=dados.equipamento_id,
+        data_calibracao=dados.data_calibracao,
+        tecnico_responsavel=dados.tecnico_responsavel,
+        instrumento_padrao=dados.instrumento_padrao,
+        certificado_numero=dados.certificado_numero,
+        proxima_calibracao=dados.proxima_calibracao,
+        observacoes=dados.observacoes,
+    )
+
+    todos_dentro_da_tolerancia = True
+    for parametro in dados.parametros:
+        erro = round(parametro.valor_medido - parametro.valor_referencia, 4)
+        dentro_tolerancia = abs(erro) <= parametro.tolerancia_maxima
+        if not dentro_tolerancia:
+            todos_dentro_da_tolerancia = False
+
+        nova_calibracao.parametros.append(
+            CalibracaoParametro(
+                grandeza=parametro.grandeza,
+                unidade=parametro.unidade,
+                valor_referencia=parametro.valor_referencia,
+                valor_medido=parametro.valor_medido,
+                tolerancia_maxima=parametro.tolerancia_maxima,
+                erro=erro,
+                dentro_tolerancia=dentro_tolerancia,
+            )
+        )
+
+    if dados.ajustado:
+        nova_calibracao.resultado_geral = ResultadoCalibracaoEnum.AJUSTADO
+    elif todos_dentro_da_tolerancia:
+        nova_calibracao.resultado_geral = ResultadoCalibracaoEnum.APROVADO
+    else:
+        nova_calibracao.resultado_geral = ResultadoCalibracaoEnum.REPROVADO
+
+    db.add(nova_calibracao)
+    db.commit()
+    db.refresh(nova_calibracao)
+    return nova_calibracao
+
+
 @router.delete("/{calibracao_id}", status_code=204)
 def remover_calibracao(calibracao_id: int, db: Session = Depends(get_db)):
     calibracao = db.get(CalibracaoEquipamento, calibracao_id)
