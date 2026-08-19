@@ -50,7 +50,10 @@ class CalibracaoEquipamento(Base):
     proxima_calibracao: Mapped[date] = mapped_column(Date, nullable=True)
 
     resultado_geral: Mapped[ResultadoCalibracaoEnum] = mapped_column(
-        Enum(ResultadoCalibracaoEnum),
+        Enum(
+            ResultadoCalibracaoEnum,
+            values_callable=lambda enum_cls: [membro.value for membro in enum_cls],
+        ),
         nullable=False,
         default=ResultadoCalibracaoEnum.APROVADO,
     )
