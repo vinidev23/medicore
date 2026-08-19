@@ -435,7 +435,7 @@ export default function CalibracaoPanel({ equipamentos, calibracoes, onRefresh }
                         whiteSpace: "nowrap",
                       }}
                     >
-                      erro {previa.erro >= 0 ? "+" : ""}
+                      erro {previa.erro > 0 ? "+" : ""}
                       {previa.erro.toFixed(2)}
                     </span>
                   )}
@@ -598,7 +598,7 @@ export default function CalibracaoPanel({ equipamentos, calibracoes, onRefresh }
                     }}
                   >
                     {p.grandeza}: {p.valor_medido}
-                    {p.unidade ?? ""} (erro {p.erro >= 0 ? "+" : ""}
+                    {p.unidade ?? ""} (erro {p.erro > 0 ? "+" : ""}
                     {p.erro})
                   </span>
                 ))}

@@ -179,13 +179,15 @@ def gerar_relatorio_calibracao_pdf(calibracao: CalibracaoEquipamento) -> io.Byte
         ["Grandeza", "Unid.", "Referência", "Medido", "Erro", "Tolerância", "Resultado"]
     ]
     for parametro in calibracao.parametros:
+        erro_valor = float(parametro.erro)
+        erro_formatado = f"+{erro_valor:g}" if erro_valor > 0 else f"{erro_valor:g}"
         linhas_parametros.append(
             [
                 parametro.grandeza,
                 parametro.unidade or "—",
                 f"{parametro.valor_referencia:g}",
                 f"{parametro.valor_medido:g}",
-                f"{parametro.erro:+g}",
+                erro_formatado,
                 f"±{parametro.tolerancia_maxima:g}",
                 "Conforme" if parametro.dentro_tolerancia else "Não conforme",
             ]

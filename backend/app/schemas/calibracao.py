@@ -54,6 +54,9 @@ class CalibracaoRead(CalibracaoBase):
 
     model_config = ConfigDict(from_attributes=True)
 
+    # O timestamp é gravado internamente em UTC "naive" (sem fuso explícito).
+    # Sem essa conversão, o navegador do usuário interpretava o horário como
+    # se já estivesse no fuso local, exibindo a hora errada.
     @field_serializer("criado_em")
     def serializar_criado_em(self, valor: datetime) -> str:
         if valor.tzinfo is None:
