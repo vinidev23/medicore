@@ -194,6 +194,19 @@ export default function CalibracaoPanel({ equipamentos, calibracoes, onRefresh }
     }
   }
 
+  async function excluirCalibracao(id) {
+    if (!window.confirm("Tem certeza que deseja excluir esta calibração?")) {
+      return;
+    }
+    try {
+      await api.delete(`/calibracoes/${id}`);
+      onRefresh();
+    } catch (erro) {
+      console.error("Erro ao excluir calibração", erro);
+      alert("Não foi possível excluir a calibração.");
+    }
+  }
+
   async function baixarRelatorio(id) {
     setGerandoRelatorioId(id);
     try {
@@ -552,23 +565,38 @@ export default function CalibracaoPanel({ equipamentos, calibracoes, onRefresh }
                   <span style={{ fontWeight: 500 }}>{nomeEquipamento(cal.equipamento_id)}</span>
                   <ResultadoBadge resultado={cal.resultado_geral} />
                 </div>
-                <button
-                  onClick={() => baixarRelatorio(cal.id)}
-                  disabled={gerandoRelatorioId === cal.id}
-                  style={{
-                    border: "1px solid var(--teal)",
-                    background: "transparent",
-                    color: "var(--teal)",
-                    borderRadius: "var(--radius)",
-                    padding: "5px 10px",
-                    fontSize: 12,
-                    fontWeight: 600,
-                    opacity: gerandoRelatorioId === cal.id ? 0.6 : 1,
-                    flexShrink: 0,
-                  }}
-                >
-                  {gerandoRelatorioId === cal.id ? "Gerando..." : "⬇ Gerar relatório"}
-                </button>
+                <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                  <button
+                    onClick={() => baixarRelatorio(cal.id)}
+                    disabled={gerandoRelatorioId === cal.id}
+                    style={{
+                      border: "1px solid var(--teal)",
+                      background: "transparent",
+                      color: "var(--teal)",
+                      borderRadius: "var(--radius)",
+                      padding: "5px 10px",
+                      fontSize: 12,
+                      fontWeight: 600,
+                      opacity: gerandoRelatorioId === cal.id ? 0.6 : 1,
+                    }}
+                  >
+                    {gerandoRelatorioId === cal.id ? "Gerando..." : "⬇ Gerar relatório"}
+                  </button>
+                  <button
+                    onClick={() => excluirCalibracao(cal.id)}
+                    style={{
+                      border: "1px solid var(--red)",
+                      background: "transparent",
+                      color: "var(--red)",
+                      borderRadius: "var(--radius)",
+                      padding: "5px 10px",
+                      fontSize: 12,
+                      fontWeight: 600,
+                    }}
+                  >
+                    Excluir
+                  </button>
+                </div>
               </div>
 
               <div style={{ fontSize: 13, color: "var(--ink-muted)" }}>

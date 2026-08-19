@@ -77,3 +77,12 @@ def atualizar_ordem_servico(
     db.commit()
     db.refresh(ordem)
     return ordem
+
+
+@router.delete("/{os_id}", status_code=204)
+def remover_ordem_servico(os_id: int, db: Session = Depends(get_db)):
+    ordem = db.get(OrdemServico, os_id)
+    if not ordem:
+        raise HTTPException(status_code=404, detail="Ordem de serviço não encontrada")
+    db.delete(ordem)
+    db.commit()

@@ -89,6 +89,19 @@ export default function OrdemServicoPanel({ equipamentos, ordens, onRefresh }) {
     }
   }
 
+  async function excluirOS(osId) {
+    if (!window.confirm("Tem certeza que deseja excluir esta ordem de serviço?")) {
+      return;
+    }
+    try {
+      await api.delete(`/ordens-servico/${osId}`);
+      onRefresh();
+    } catch (erro) {
+      console.error("Erro ao excluir ordem de serviço", erro);
+      alert("Não foi possível excluir a ordem de serviço.");
+    }
+  }
+
   async function mudarStatus(osId, novoStatus) {
     try {
       await api.patch(`/ordens-servico/${osId}`, { status: novoStatus });
@@ -275,39 +288,54 @@ export default function OrdemServicoPanel({ equipamentos, ordens, onRefresh }) {
                 )}
               </div>
 
-              {(os.status === "aberta" || os.status === "em_andamento") &&
-                concluindoId !== os.id && (
-                  <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
-                    {os.status === "aberta" && (
+              <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                {(os.status === "aberta" || os.status === "em_andamento") &&
+                  concluindoId !== os.id && (
+                    <>
+                      {os.status === "aberta" && (
+                        <button
+                          onClick={() => mudarStatus(os.id, "em_andamento")}
+                          style={{
+                            border: "1px solid var(--teal)",
+                            background: "transparent",
+                            color: "var(--teal)",
+                            borderRadius: "var(--radius)",
+                            padding: "5px 10px",
+                            fontSize: 12,
+                          }}
+                        >
+                          Iniciar
+                        </button>
+                      )}
                       <button
-                        onClick={() => mudarStatus(os.id, "em_andamento")}
+                        onClick={() => abrirFormularioConclusao(os.id)}
                         style={{
-                          border: "1px solid var(--teal)",
-                          background: "transparent",
-                          color: "var(--teal)",
+                          border: "1px solid var(--line)",
+                          background: "var(--ink)",
+                          color: "#fff",
                           borderRadius: "var(--radius)",
                           padding: "5px 10px",
                           fontSize: 12,
                         }}
                       >
-                        Iniciar
+                        Concluir
                       </button>
-                    )}
-                    <button
-                      onClick={() => abrirFormularioConclusao(os.id)}
-                      style={{
-                        border: "1px solid var(--line)",
-                        background: "var(--ink)",
-                        color: "#fff",
-                        borderRadius: "var(--radius)",
-                        padding: "5px 10px",
-                        fontSize: 12,
-                      }}
-                    >
-                      Concluir
-                    </button>
-                  </div>
-                )}
+                    </>
+                  )}
+                <button
+                  onClick={() => excluirOS(os.id)}
+                  style={{
+                    border: "1px solid var(--red)",
+                    background: "transparent",
+                    color: "var(--red)",
+                    borderRadius: "var(--radius)",
+                    padding: "5px 10px",
+                    fontSize: 12,
+                  }}
+                >
+                  Excluir
+                </button>
+              </div>
             </div>
 
             {concluindoId === os.id && (

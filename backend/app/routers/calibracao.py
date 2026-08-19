@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import StreamingResponse
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.orm import Session, joinedload
 
 from app.database import get_db
@@ -119,11 +118,13 @@ def relatorio_calibracao(calibracao_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Calibração não encontrada")
 
     pdf_buffer = relatorio_calibracao_service.gerar_relatorio_calibracao_pdf(calibracao)
+    conteudo_pdf = pdf_buffer.getvalue()
 
-    return StreamingResponse(
-        pdf_buffer,
+    return Response(
+        content=conteudo_pdf,
         media_type="application/pdf",
         headers={
-            "Content-Disposition": f"attachment; filename=relatorio-calibracao-{calibracao_id}.pdf"
+            "Content-Disposition": f"attachment; filename=relatorio-calibracao-{calibracao_id}.pdf",
+            "Content-Length": str(len(conteudo_pdf)),
         },
     )
